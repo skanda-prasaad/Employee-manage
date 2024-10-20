@@ -36,9 +36,9 @@ const App = () => {
       {!user ? (
         <Login handleLogin={handleLogin} />
       ) : user === 'admin' ? (
-        <AdminDashboard />
+        <AdminDashboard changeUser={setUser} />
       ) : (
-        <EmployeeDashboard />
+        <EmployeeDashboard changeUser={setUser} />
       )}
     </>
   );

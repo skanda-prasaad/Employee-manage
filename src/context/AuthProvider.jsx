@@ -10,12 +10,13 @@ const AuthProvider = ({ children }) => {
 
   // Initialize localStorage with default data if not present
   useEffect(() => {
-    const { employees: storedEmployees } = getLocalStorage();
+    let { employees: storedEmployees } = getLocalStorage();
     if (!storedEmployees || storedEmployees.length === 0) {
       setLocalStorage(); // Initialize default data
+      storedEmployees = getLocalStorage().employees;
     }
-    setEmployees(storedEmployees || []);
-  }, []);
+    setEmployees(storedEmployees);
+  }, [])
 
   const addEmployee = (newEmployee) => {
     const updatedEmployees = [...employees, newEmployee];
