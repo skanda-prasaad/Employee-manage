@@ -1,18 +1,18 @@
 import React from 'react'
 
-const Header = (props) => {
-
-  const logOutUser = ()=>{
-    localStorage.removeItem('loggedInUser')
-    props.changeUser('')
-    window.location.reload()
-  }
-
+const Header = ({ user, onLogout, textColor = 'text-blue-600' }) => {
   return (
-    <div className='flex items-end justify-between'>
-      <h1 className='text-2xl font-medium'>Hello <br /> <span className='text-3xl font-semibold'>User 👋🏻</span></h1>
-      <button onClick={logOutUser} className='bg-red-600 text-lg font-medium text-white px-5 py-2 rounded-small'>Log Out</button>
-    </div>
+    <header className="bg-white shadow-md p-4">
+      <div className="flex justify-between items-center">
+        <h1 className={`text-2xl font-bold ${textColor}`}>Welcome, {user.name}!</h1>
+        <button 
+          onClick={onLogout}
+          className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
+        >
+          Logout
+        </button>
+      </div>
+    </header>
   )
 }
 

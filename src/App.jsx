@@ -1,47 +1,43 @@
 // App.jsx
-import React, { useContext, useState, useEffect } from 'react';
-import Login from './components/Auth/Loigin';
-import EmployeeDashboard from './components/Dashboard/EmployeeDashboard';
-import AdminDashboard from './components/Dashboard/AdminDashboard';
+import React, { useContext, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import { AuthContext } from './context/AuthProvider';
-import { getLocalStorage } from './utils/localStorage';
+import Login from './components/Auth/Loigin';
+import AdminDashboard from './components/Dashboard/AdminDashboard';
+import EmployeeDashboard from './components/Dashboard/EmployeeDashboard';
 
-const App = () => {
-  const [user, setUser] = useState(null);
-  const { employees } = useContext(AuthContext); // Destructure employees from context
+function AppContent() {
+  const { currentUser } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('loggedInUser');
-    if (storedUser) setUser(storedUser); 
-  }, []);
-
-  const handleLogin = (email, password) => {
-    const { admin } = getLocalStorage();
-
-    if (admin.some((a) => a.email === email && a.password === password)) {
-      console.log('Admin Login');
-      setUser('admin');
-    } else if (
-      employees.some((e) => e.email === email && e.password === password)
-    ) {
-      console.log('Employee Login');
-      setUser('employee');
+    if (currentUser) {
+      if (currentUser.isAdmin) {
+        navigate('/admin-dashboard');
+      } else {
+        navigate('/employee-dashboard');
+      }
     } else {
-      alert('Invalid Credentials'); // Show alert for invalid credentials
+      navigate('/login');
     }
-  };
+  }, [currentUser, navigate]);
 
   return (
-    <>
-      {!user ? (
-        <Login handleLogin={handleLogin} />
-      ) : user === 'admin' ? (
-        <AdminDashboard changeUser={setUser} />
-      ) : (
-        <EmployeeDashboard changeUser={setUser} />
-      )}
-    </>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/admin-dashboard" element={<AdminDashboard />} />
+      <Route path="/employee-dashboard" element={<EmployeeDashboard />} />
+      <Route path="/" element={<Navigate to="/login" />} />
+    </Routes>
   );
-};
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  );
+}
 
 export default App;

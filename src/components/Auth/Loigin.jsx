@@ -1,14 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthProvider';
 
-const Login = ({ handleLogin }) => {
+const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { loginUser } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const submithandler = (e) => {
         e.preventDefault();
-        // console.log("Email:", email);
-        // console.log("Password:", password);
-        handleLogin(email, password);
+        const loginResult = loginUser(email, password);
+        if (loginResult === 'admin') {
+            navigate('/admin-dashboard');
+        } else if (loginResult === 'employee') {
+            navigate('/employee-dashboard');
+        } else {
+            alert('Invalid credentials');
+        }
         setEmail('');
         setPassword('');
     };
