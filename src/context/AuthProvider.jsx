@@ -1,6 +1,5 @@
 // context/AuthProvider.jsx
 import React, { createContext, useState, useCallback } from 'react';
-import { getLocalStorage } from '../utils/localStorage';
 
 // Create the AuthContext
 export const AuthContext = createContext();
@@ -12,25 +11,37 @@ const AuthProvider = ({ children }) => {
   });
 
   const loginUser = useCallback((email, password) => {
-    const { employees } = getLocalStorage();
-    
-    // Check for admin credentials
+    // Admin login check
     if (email === 'admin@example.com' && password === '123') {
-      const loggedInAdmin = { 
-        id: 101, 
-        email: 'admin@example.com', 
-        isAdmin: true 
+      const adminUser = {
+        id: 'admin',
+        email,
+        isAdmin: true,
+        name: 'Admin'
       };
-      setCurrentUser(loggedInAdmin);
-      localStorage.setItem('loggedInUser', JSON.stringify(loggedInAdmin));
+      setCurrentUser(adminUser);
+      localStorage.setItem('loggedInUser', JSON.stringify(adminUser));
       return 'admin';
     }
 
-    const employeeUser = employees.find(emp => emp.email === email && emp.password === password);
-    if (employeeUser) {
-      const loggedInEmployee = { ...employeeUser, isAdmin: false };
-      setCurrentUser(loggedInEmployee);
-      localStorage.setItem('loggedInUser', JSON.stringify(loggedInEmployee));
+    // Employee login check
+    const employees = [
+      { id: 1, email: 'john@example.com', password: '123', name: 'Employee 1' },
+      { id: 2, email: 'jane@example.com', password: '123', name: 'Employee 2' },
+      { id: 3, email: 'bob@example.com', password: '123', name: 'Employee 3' },
+      { id: 4, email: 'alice@example.com', password: '123', name: 'Employee 4' },
+      { id: 5, email: 'charlie@example.com', password: '123', name: 'Employee 5' },
+    ];
+
+    const employee = employees.find(emp => emp.email === email && emp.password === password);
+    
+    if (employee) {
+      const employeeUser = {
+        ...employee,
+        isAdmin: false
+      };
+      setCurrentUser(employeeUser);
+      localStorage.setItem('loggedInUser', JSON.stringify(employeeUser));
       return 'employee';
     }
 
@@ -42,14 +53,8 @@ const AuthProvider = ({ children }) => {
     localStorage.removeItem('loggedInUser');
   }, []);
 
-  const value = {
-    currentUser,
-    loginUser,
-    logoutUser
-  };
-
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ currentUser, loginUser, logoutUser }}>
       {children}
     </AuthContext.Provider>
   );
