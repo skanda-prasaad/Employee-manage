@@ -11,7 +11,6 @@ const AuthProvider = ({ children }) => {
   });
 
   const loginUser = useCallback((email, password) => {
-    // Admin login check
     if (email === 'admin@example.com' && password === '123') {
       const adminUser = {
         id: 'admin',
